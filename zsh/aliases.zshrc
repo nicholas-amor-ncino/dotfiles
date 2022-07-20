@@ -8,3 +8,5 @@ alias sfdisplay="sfdx force:org:display"
 alias sfopen="sfdx force:org:open"
 alias sfpush="sfdx force:source:push"
 alias sfdelete="sfdx force:org:delete"
+
+alias sso="aws-sso-login"

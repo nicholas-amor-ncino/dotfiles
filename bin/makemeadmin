@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sudo /usr/local/jamf/bin/jamf policy -id 458 -showSteps -selfServiceOnly -forceNoRecon -username $(whoami)

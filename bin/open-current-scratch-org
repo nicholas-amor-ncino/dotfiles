@@ -1,0 +1,33 @@
+#!/bin/sh
+
+## Open current scratch org.
+
+if [[ $1 == "--help" ]]
+then
+  # echo "Opens current scratch org. Pass --url to only retrieve frontdoor URL. --path is passed to sfdx - see it's usage for more help."
+  echo "Opens current scratch org. Pass --url to only retrieve frontdoor URL."
+  exit 0
+fi
+
+BROWSER="/Applications/Microsoft Edge.app"
+ORGS_DIR=~/Developer
+
+ORG_DIR=$(ls -r "$ORGS_DIR" | grep -m 1 'force-ncinoocr_\d\d\d\d-\d\d-\d\d')
+
+if [[ $1 == "--dir" ]]
+then
+  echo $ORGS_DIR/$ORG_DIR
+  exit 0
+fi
+
+cd $ORGS_DIR/$ORG_DIR
+
+LOGIN_URL=$(open-scratch-org --url)
+
+if [[ $1 == "--url" ]]
+then
+  echo $LOGIN_URL
+  exit 0
+fi
+
+open -a "$BROWSER" $LOGIN_URL --args --remote-debugging-port=9222

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+ORGS_DIR=~/Developer
+
+ORG_DIR=$(ls -r $ORGS_DIR | grep -m 1 'force-ncinoocr_\d\d\d\d-\d\d-\d\d')
+
+echo $ORGS_DIR/$ORG_DIR

@@ -1,0 +1,49 @@
+#!/bin/sh
+
+BROWSER="/Applications/Microsoft Edge.app"
+SFDX=/usr/local/bin/sfdx
+
+if [[ $SFDX == "" || $SFDX == null ]]
+then
+  echo "No sfdx utility found." >&2
+  exit 1
+fi
+
+# PATH="lightning/o/LLC_BI__Collateral__c/list?filterName=Recent"
+# TODO: path parameter
+# if [[ $1 == "--path" ]]
+# then
+#   PATH=$2
+# fi
+
+LOGIN_JSON=$($SFDX force:org:open --urlonly --json --path="lightning/o/LLC_BI__Collateral__c/list?filterName=Recent" 2>/dev/null)
+
+if [[ $1 == "--json" ]]
+then
+  echo "$LOGIN_JSON"
+  exit 0
+fi
+
+LOGIN_URL=$(echo "$LOGIN_JSON" | grep '"url"' | sed -e 's/"url": "\(.*\)",/\1/')
+
+if [[ $LOGIN_URL == *"ncino"* || $LOGIN_URL == "" || $LOGIN_URL == null ]]
+then
+  echo Error - No scratch org found. >&2
+  exit 1
+fi
+
+LOGIN_SID=$(echo "$LOGIN_URL" | sed -e 's/sid=\(.*\)&/\1/')
+
+if [[ $1 == "--sid" ]]
+then
+  echo $LOGIN_SID
+  exit 0
+fi
+
+if [[ $1 == "--url" ]]
+then
+  echo $LOGIN_URL
+  exit 0
+fi
+
+open -a "$BROWSER" $LOGIN_URL --args --remote-debugging-port=9222

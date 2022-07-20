@@ -1,0 +1,19 @@
+{
+  "name": "dotfiles",
+  "version": "1.0.0",
+  "description": "home env config",
+  "main": "index.js",
+  "scripts": {
+    "setup": "./install.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicholas-amor-ncino/dotfiles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicholas-amor-ncino/dotfiles/issues"
+  },
+  "homepage": "https://github.com/nicholas-amor-ncino/dotfiles#readme"
+}
