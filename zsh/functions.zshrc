@@ -45,3 +45,12 @@ aws-sso-login() {
 
     # print "You're now connected to AWS '$tempEnvName' account at '$awsRegion' region"
 }
+
+_sfuserset() {
+    variable="$1"
+    value="$2"
+    username=$(sfdx force:org:display --json | jq --raw-output ".result.username")
+    sfdx data update record --sobject User \
+        --where Username="${username}" \
+        --values ${variable}="${value}"
+}
