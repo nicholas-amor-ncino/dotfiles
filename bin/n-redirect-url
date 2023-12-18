@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "Usage: $0 <target> (docman|docman-acc|dashboard)"
+}
+
+usage_docman() {
+    echo "Usage: $0 docman <context-id>"
+}
+
+usage_docman_acc() {
+    echo "Usage: $0 docman-acc <context-id>"
+}
+
+usage_dashboard() {
+    echo "Usage: $0 dashboard <context-id>"
+}
+
+if [[ -z $1 ]]; then
+    usage
+    exit 1
+fi
+
+target=$1
+
+if [[ $target == "docman" ]]; then
+    if [[ -z $2 ]]; then
+        usage_docman
+        exit 1
+    fi
+    echo "/apex/NDOC__UniversalDocMan?id=$2"
+elif [[ $target == "docman-acc" ]]; then
+    if [[ -z $2 ]]; then
+        usage_docman_acc
+        exit 1
+    fi
+    echo "/apex/NDOC__AccountDocMan?id=$2"
+elif [[ $target == "dashboard" ]]; then
+    if [[ -z $2 ]]; then
+        usage_dashboard
+        exit 1
+    fi
+    echo "/apex/ncinoocr__ocr#/document-selection/$2"
+else
+    usage
+    exit 1
+fi

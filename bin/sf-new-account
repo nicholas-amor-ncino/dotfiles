@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+account_id=$(sfapex "Account a = new Account(Name='Test Account $RANDOM', LLC_BI__lookupKey__c='test-acc-$RANDOM', LLC_BI__Fiscal_Year_End__c=Date.newInstance(2030, 12, 31)); insert a; System.debug(a.Id);")
+
+# TODO - specify template -- ?templateName=Agriculture%20Template
+bundle=$(sfrest "/apexrest/ncinoocr/startUnderwriting/customerId/$account_id")
+
+if [[ $1 == "--show-bundle" ]]; then
+    jq '.' <<< "$bundle"
+    exit
+fi
+
+echo "$account_id"

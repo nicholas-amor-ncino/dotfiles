@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+FORMAT="/lightning/cmp/ncinoocr__FinancialStatementMapping?ncinoocr__relationshipId=0017X00000xMx4SQAS&ncinoocr__spreadId=824ab582-c507-4972-aeee-ea7e7c2932f8"
+
+echo "$FORMAT"

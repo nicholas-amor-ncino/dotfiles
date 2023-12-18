@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nicholas-amor-ncino/dotfiles/issues"
   },
-  "homepage": "https://github.com/nicholas-amor-ncino/dotfiles#readme"
+  "homepage": "https://github.com/nicholas-amor-ncino/dotfiles#readme",
+  "dependencies": {
+    "@salesforce/cli": "^2.21.8"
+  }
 }

@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+
+# retrieves the plain text log of a given CodeBuild run
+
+import json
+import sys
+import subprocess
+import os
+
+
+def usage():
+    print("Usage: awslogcat <log-group-name:log-stream-name>")
+
+
+def parse_input(input):
+    if input == None:
+        usage()
+        sys.exit(1)
+
+    if not ":" in input:
+        print("expected format <log-group-name:log-stream-name>", file=sys.stderr)
+        sys.exit(1)
+
+    return input.split(":")
+
+
+def is_aws_authenticated():
+    return os.getenv("AWS_PROFILE", None) == "devops"
+
+
+def get_log_events(log_group_name, log_stream_name, next_token=None):
+    # TODO use api/library?
+    args = [
+        "aws",
+        "logs",
+        "get-log-events",
+        "--log-group-name",
+        f"/aws/codebuild/{log_group_name}",
+        "--log-stream-name",
+        log_stream_name,
+        "--start-from-head",
+    ]
+
+    if next_token != None:
+        args.append("--next-token")
+        args.append(next_token)
+
+    log_events = subprocess.run(args, capture_output=True, check=True)
+    return json.loads(log_events.stdout)
+
+
+def get_all_log_events(group, stream):
+    class LogStreamIterator:
+        def __init__(self, group, stream):
+            self.group = group
+            self.stream = stream
+            self.next = None
+            self.done = False
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self.done:
+                raise StopIteration
+
+            data = get_log_events(self.group, self.stream, self.next)
+
+            # given the same token passed in, this is the end of the stream
+            if data["nextForwardToken"] != self.next:
+                self.next = data["nextForwardToken"]
+            else:
+                self.done = True
+
+            return data
+
+    return LogStreamIterator(group, stream)
+
+
+def main(input=None):
+    [log_group, log_stream] = parse_input(input)
+
+    # TODO is there a better way to assert that we can access the logs?
+    if not is_aws_authenticated():
+        print("not logged in to aws - run `sso devops`", file=sys.stderr)
+        sys.exit(1)
+
+    for data in get_all_log_events(log_group, log_stream):
+        for event in data["events"]:
+            print(event["message"], end="")
+
+
+main(*sys.argv[1:])
+# main("ncinoocr-ci-build-devops:c50e8b5c-c38d-4c29-ba6f-2d2932a60eed")

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "usage: sfrest ENDPOINT"
+    exit 1
+}
+
+when() {
+    if [[ $1 ]]; then
+        eval "$2"
+    fi
+}
+
+debug_flag=false
+
+## TODO: args
+for ARG in "$@"; do
+    if [[ $ARG == "--debug" ]]; then
+    debug_flag=true
+    fi
+done
+
+v="[[ -z $1 ]]"
+
+when "$v" usage
+
+sf_display=$(sf org display --json | jq '.result')
+
+instance_url=$(jq --raw-output '.instance_url' <<< "$sf_display")
+access_token=$(jq --raw-output '.accessToken' <<< "$sf_display")
+
+auth_header="Authorization: Bearer $access_token"
+url="$instance_url/services$1"
+
+params=()
+params+=(--header "$auth_header")
+params+=($url)
+params+=(--silent)
+
+when $debug_flag "print_debug ${params[@]}"
+
+curl "${params[@]}"

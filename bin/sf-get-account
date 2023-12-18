@@ -1,0 +1,9 @@
+#!/bin/sh
+
+ACCOUNT="SForce"
+
+if [ -z "$1" ]; then
+    ACCOUNT="$1"
+fi
+
+sf-get-sobject Account --where "Name='$ACCOUNT'"

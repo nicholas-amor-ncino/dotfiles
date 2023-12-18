@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sf=$(my-sf)
+
+$sf org open --url-only --json | jq --raw-output '.result.url'

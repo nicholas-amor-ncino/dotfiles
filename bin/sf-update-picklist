@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# TODO -- use update record (see populate-country-2)
+
+# Uses REST API
+# Uses Tooling API
+
+sfdisplay=$(sf org display --json)
+sfdisplay_status=$?
+if [[ $sfdisplay_status != 0 ]]; then
+    echo "Unable to reach scratch org" >&2
+    exit $sfdisplay_status
+fi
+
+sfinstance=$(jq --raw-output '.result.instanceUrl' <<< "$sfdisplay")
+sftoken=$(jq --raw-output '.result.accessToken' <<< "$sfdisplay")
+
+select_custom_field_by_name="SELECT%20Id,FullName%20FROM%20CustomField%20WHERE%20NamespacePrefix='ncinoocr'%20AND%20Length=null%20AND%20DeveloperName='$1'"
+
+custom_field_soql=$(curl \
+    --silent \
+    --url "$sfinstance/services/data/v56.0/tooling/query/?q=$select_custom_field_by_name" \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer $sftoken")
+custom_field_soql_status=$?
+if [[ $custom_field_soql_status != 0 ]]; then
+    echo "Unable to query fields" >&2
+    exit $custom_field_soql_status
+fi
+
+custom_fields=$(jq --compact-output --raw-output '.records[]' <<< "$custom_field_soql")
+
+for custom_field in $custom_fields; do
+    custom_field_id=$(jq --raw-output .Id <<< "$custom_field")
+    fullname=$(jq --raw-output .FullName <<< "$custom_field")
+    
+    values=$(jq --compact-output --null-input --arg fullname "$fullname" "$2")
+
+    curl \
+        --silent \
+        --request PATCH \
+        --url "$sfinstance/services/data/v56.0/tooling/sobjects/CustomField/$custom_field_id" \
+        --header "Content-Type: application/json" \
+        --header "Authorization: Bearer $sftoken" \
+        --data-raw "$values"
+done
+

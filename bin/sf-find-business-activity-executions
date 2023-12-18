@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sf data query --query "SELECT Id,nFORCE__Correlation_Id__c,nFORCE__Business_Activity_Name__c,nFORCE__Status__c,nFORCE__Message__c,LastModifiedDate FROM nFORCE__Business_Activity_Execution__c ORDER BY Id DESC LIMIT 10" "$@"

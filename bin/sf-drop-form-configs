@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+#TODO move to alias
+sfapex "delete [SELECT Id FROM ncinoocr__AE_Form_Field__c]; delete [SELECT Id FROM ncinoocr__AE_Form_Field_Group__c]; delete [SELECT Id FROM ncinoocr__AE_Form__c];"

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo TODO: curl open-ai chat completion API
+    exit 0
+}
+
+usage

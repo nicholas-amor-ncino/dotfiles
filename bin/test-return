@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+f_cmd() {
+    if [[ -n $1 ]]; then
+        return 1
+    fi
+
+    return 0
+}
+
+f1() {
+    f_cmd foo
+}
+
+f2() {
+    f_cmd foo
+    return $?
+}
+
+f1
+f2

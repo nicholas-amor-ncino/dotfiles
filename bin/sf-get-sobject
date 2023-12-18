@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+## Usage:
+# $ sf-get-sobject SOBJECTTYPE ID
+#
+#  --debug
+#    Just print the sf JSON
+
+usage() {
+  echo Usage: sf-get-sobject SOBJECTTYPE ID
+}
+
+if [[ -z $1 || -z $2 ]]; then
+  usage
+  exit
+fi
+
+PLAIN_ARGS=()
+DEBUG_ARG=false
+for ARG in "$@"; do
+    if [[ $ARG == "--debug" ]]; then
+        DEBUG_ARG=true
+        break
+    fi
+    PLAIN_ARGS+=("$ARG")
+done
+# ERR_OUTPUT=$([ $DEBUG_ARG ] && echo 2>&2 || echo 2>/dev/null)
+
+SF=$(my-sf)
+DATA=$($SF data get record --json --sobject "${PLAIN_ARGS[@]}")
+STATUS=$?
+if $DEBUG_ARG; then
+    echo "$DATA"
+    exit $STATUS
+fi
+if [[ -z "$DATA" ]]; then
+    echo "Error: Empty output from get record command" >&2
+    exit $STATUS
+fi
+
+JSON=$(jq '.' <<< "$DATA")
+if [[ -z "$JSON" ]]; then
+    echo "Error: Invalid JSON output from get record command" >&2
+    exit $STATUS
+fi
+if [ $STATUS != 0 ]; then
+    MESSAGE=$(jq-parse "$DATA" '.message')
+    echo "Error: $MESSAGE" >&2
+    exit $STATUS
+fi
+
+JSTATUS=$(jq '.status' <<< "$DATA")
+if [ "${JSTATUS:-0}" != 0 ]; then
+    MESSAGE=$(jq-parse "$DATA" '.message')
+    echo "Error: $MESSAGE" >&2
+    exit "${JSTATUS:-1}"
+fi
+
+JSON=$(jq '.result' <<< "$DATA")
+STATUS=$?
+if [ $STATUS != 0 ]; then
+    MESSAGE="Failed to parse"
+    echo "Error: $MESSAGE" >&2
+    exit $STATUS
+fi
+
+echo "$JSON"

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# k='[{"default":false,"label":"USA","valueName":"USA"},{"default":false,"label":"USA","valueName":"USA"},{"default":false,"label":"USA","valueName":"USA"},{"default":false,"label":"USA","valueName":"USA"},{"default":false,"label":"USA","valueName":"USA"}]'
+
+# sobject="AccountDocument"
+# sobjectfield="Country"
+# values=('nCino USA', 'nCino Australia', 'nCino Performance ', 'USA', 'Australia', 'UK', 'Canada')
+
+# TODO -- values[] --> [(default, label, valueName), ...]
+# k=$(for v in "${values[@]}"; do echo  ; done | jq -n)
+
+# meta='{"label":"Country","type":"Picklist","valueSet":{"valueSetDefinition":{"value":'  $k '}}}'
+
+sf-update-picklist-record() {
+    sobject=$1
+    sobjectfield=$2
+    meta='{"label":"Country","type":"Picklist","valueSet":{"valueSetDefinition":{"value":[{"default":false,"label":"nCino USA","valueName":"nCino USA"},{"default":false,"label":"nCino Australia","valueName":"nCino Australia"},{"default":false,"label":"nCino Performance","valueName":"nCino Performance"},{"default":false,"label":"USA","valueName":"USA"},{"default":false,"label":"Australia","valueName":"Australia"},{"default":false,"label":"UK","valueName":"UK"},{"default":false,"label":"Canada","valueName":"Canada"}]}}}'
+    sf data update record \
+        --use-tooling-api \
+        --sobject CustomField \
+        --where "EntityDefinition.DeveloperName='$sobject' DeveloperName='$sobjectfield'" \
+        --values "Metadata='$meta'"
+}
+
+sf-update-picklist-record AccountDocument Country
+sf-update-picklist-record Document_Placeholder Country

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sf-update-picklist OCR_Document_Type '{FullName: $fullname,  Metadata: {label: "Automated Spreading Form Type", type: "Picklist", valueSet: {valueSetDefinition: {value: [{default: false, label: "Financial Statement", valueName: "Financial Statement"}, {default: false, label: "Tax Statement", valueName: "Tax Statement"}, {default: false, label: "Fixed Form", valueName: "Fixed Form"}]}}}}'

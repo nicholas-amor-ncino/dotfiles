@@ -1,0 +1,9 @@
+#!/bin/sh
+
+QUERY="SELECT Id, Name FROM Account"
+
+if [ -n "$1" ]; then
+    QUERY="$QUERY WHERE Name='$1'"
+fi
+
+$SF force:data:soql:query --json --query "$QUERY" | jq --raw-output '.result.records[] | { id:.Id, name:.Name, }'

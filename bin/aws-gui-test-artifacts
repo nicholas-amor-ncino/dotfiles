@@ -1,0 +1,8 @@
+#!/bin/sh
+
+BUILD_ID="2ba409c2-ea9d-4e5e-8310-8537ceed16af"
+if [[ -n $1 ]]; then
+    BUILD_ID=$1
+fi
+
+aws s3 ls s3://force-ncinoocr-autospread/artifacts/$BUILD_ID/autospread-tests-artifacts/autospreadTests/ --recursive --output json

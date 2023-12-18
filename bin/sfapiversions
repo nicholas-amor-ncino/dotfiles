@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sfrest /data | jq --raw-output 'sort_by(.url) | reverse | .[] | "\(.label) - v\(.version)"'

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+sfquery "SELECT Id,Name,nFORCE__lookupKey__c FROM nFORCE__Screen__c"
+sfquery "SELECT Id,Name,nFORCE__lookupKey__c FROM nFORCE__Screen_Section__c WHERE nFORCE__lookupKey__c LIKE 'AutoSpreading-%'"
+# sfquery "SELECT Id,nFORCE__Conditional_Display_Criteria__c FROM nFORCE__Screen_Section__c"
+sfquery "SELECT Id,Name,nFORCE__Field_Set_Key__c,nFORCE__lookupKey__c FROM nFORCE__Section_Configuration__c WHERE nFORCE__Field_Set_Key__c LIKE 'ncinoocr__%'"

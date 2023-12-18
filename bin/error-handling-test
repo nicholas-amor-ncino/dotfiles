@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+MYJSON_GOOD='{"exitCode":0,"result":{"success":true}}'
+MYJSON_BAD='{"exitCode":1,"message":"Known error occurred."}'
+MYJSON_UGLY='Some other error message.'
+
+printerr() {
+    echo Unexpected error - "$@" 1>&2;
+}
+
+exitError(){
+  echo "FAILURE: $1"
+  exit 1
+}
+
+getjson() {
+    if [[ $1 == "ugly" ]]; then
+        printerr "$MYJSON_UGLY"
+        return 1
+    elif [[ $1 == "bad" ]]; then
+        echo "$MYJSON_BAD"
+        return 1
+    fi
+
+    echo "$MYJSON_GOOD"
+    return 0
+}
+
+createOrg() {
+    INPUT="good"
+    if [[ $1 != null ]]; then
+        INPUT=$1
+    fi
+
+    OUTPUT=$(getjson "$INPUT")
+
+    if [[ $(jq -r '.exitCode' <<< "${OUTPUT}") != 0 ]]; then
+        ERROR=$(jq -r '.message' <<< "${OUTPUT}")
+        if [[ $ERROR != '' ]]; then
+            exitError "WAS ERROR - $ERROR"
+        else
+            exitError "WAS UNKNOWN ERROR"
+        fi
+    fi
+
+    ORG=$(jq -r '.result' <<< "${OUTPUT}")
+    echo "$ORG"
+    echo SUCCESS
+}
+
+main() {
+    createOrg "$1"
+}
+
+main "$1"

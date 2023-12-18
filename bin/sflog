@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "Usage: sflog ID"
+}
+
+if [[ -z $1 ]]; then
+    usage >&2
+    exit 1
+fi
+
+$SF apex get log --log-id "$1"

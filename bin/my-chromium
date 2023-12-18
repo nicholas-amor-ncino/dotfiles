@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# update-chromium
+
+chromium=~/.local/opt/chromium/latest/chrome-mac/Chromium.app
+
+echo $chromium

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sf apex test run --wait 30 --result-format junit | xpath -e //testsuites/testsuite/testcase

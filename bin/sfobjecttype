@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+DEBUG_ARG=false
+for ARG in "$@"; do
+    if [[ $ARG == "--debug" ]]; then
+        DEBUG_ARG=true
+        break
+    fi
+done
+
+APEXLOG=$(sfapex "System.debug(Id.valueOf('$1').getSObjectType());")
+APEXSTATUS=$?
+
+# if $DEBUG_ARG; then
+#     echo "$APEXLOG"
+#     exit $APEXSTATUS
+# fi
+
+# if [[ $APEXSTATUS != 0 ]]; then
+#     echo "Error executing apex (unknown)" >&2
+#     exit $APEXSTATUS
+# fi
+
+# RESULT=$(grep "|USER_DEBUG|" <<< "$APEXLOG")
+
+# if [[ -z $RESULT ]]; then
+#     MESSAGE=$(grep "|FATAL_ERROR|" <<< "$APEXLOG" | cut -d "|" -f 3)
+#     echo "Error: $MESSAGE" >&2
+#     exit 1
+# fi
+
+# cut -d "|" -f 5 <<< "$RESULT"
+
+echo $APEXLOG

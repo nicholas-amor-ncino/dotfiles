@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+SF=$(my-sf)
+
+QUERY="SELECT Id,Application,Operation,Status FROM ApexLog ORDER BY LastModifiedDate DESC LIMIT 25"
+
+# sf data query --use-tooling-api --query "$QUERY"
+$SF data query --use-tooling-api --query "$QUERY" --json | jq --raw-output '.result.records' | jq --raw-output 'map("\(.Id) - \(.Application) \(.Operation): \(.Status)") | .[]'
+
+## TODO: pick a log
+## TODO: sf apex get log --log-id $SELECTED

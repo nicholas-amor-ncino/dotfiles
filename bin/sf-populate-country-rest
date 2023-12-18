@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+sfdisplay=$(sf org display --json)
+
+instance_url=$(jq --raw-output '.result.instanceUrl' <<< "$sfdisplay")
+access_token=$(jq --raw-output '.result.accessToken' <<< "$sfdisplay")
+
+field=$(curl \
+    --silent \
+    --get \
+    --url "$instance_url/services/data/v58.0/tooling/query/" \
+    --data-urlencode "q=SELECT Id FROM CustomField WHERE EntityDefinition.DeveloperName='AccountDocument' AND DeveloperName='Country'" \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer $access_token")
+field_id=$(jq --raw-output '.records[0].Id' <<< "$field")
+
+curl \
+    --silent \
+    --request PATCH \
+    --url "$instance_url/services/data/v58.0/tooling/sobjects/CustomField/$field_id" \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer $access_token" \
+    --data-raw '{"Metadata":{"label":"Country","type":"Picklist","valueSet":{"valueSetDefinition":{"value":[{"default":false,"label":"nCino USA","valueName":"nCino USA"},{"default":false,"label":"nCino Australia","valueName":"nCino Australia"}]}}}}'

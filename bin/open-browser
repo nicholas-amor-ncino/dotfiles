@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+devtools=true
+browser=chromium
+url=$1
+
+if [[ $browser == "chromium" && $devtools == true ]]; then
+    args="--remote-debugging-port=9222 --auto-open-devtools-for-tabs --profile-directory=ScratchOrg"
+    chromium=$(my-chromium)
+    open -a "$chromium" "$url" --args "$args"
+fi
+
+if [[ $browser == "safari" ]]; then
+    open -a /Application/Safari.app "$url" #--args $url
+fi

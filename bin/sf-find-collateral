@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# json_arg=false
+
+params=(--query
+"SELECT Id,Name,LLC_BI__lookupKey__c,CreatedDate FROM LLC_BI__Collateral__c ORDER BY CreatedDate Desc LIMIT 10")
+
+if [[ $1 == "--json" ]]; then
+    params+=(--json)
+fi
+
+sf data query "${params[@]}"

@@ -1,49 +1,108 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-BROWSER="/Applications/Microsoft Edge.app"
-SFDX=/usr/local/bin/sfdx
+sf=$(my-sf)
 
-if [[ $SFDX == "" || $SFDX == null ]]
-then
-  echo "No sfdx utility found." >&2
-  exit 1
+debug_arg=false
+path_arg=false
+json_arg=false
+sid_arg=false
+url_arg=false
+# nocache_arg=false
+for ARG in "$@"; do
+    if [[ $ARG == "--debug" ]]; then
+        debug_arg=true
+        break
+    fi
+    if [[ $ARG == "--path" ]]; then
+        path_arg=true
+        break
+    fi
+    if [[ $ARG == "--json" ]]; then
+        json_arg=true
+        break
+    fi
+    if [[ $ARG == "--sid" ]]; then
+        sid_arg=true
+        break
+    fi
+    if [[ $ARG == "--url" ]]; then
+        url_arg=true
+        break
+    fi
+    # if [[ $ARG == "--nocache" ]]; then
+    #     nocache_arg=true
+    #     break
+    # fi
+done
+
+when(){
+    if [[ $1 ]]; then
+        cmd
+    fi
+}
+
+with_exit(){
+    cmd
+    exit 0
+}
+
+
+if [ ! -d .sfdx ]; then
+    echo "Warning: might not be in a sfdx project!"
 fi
 
-# PATH="lightning/o/LLC_BI__Collateral__c/list?filterName=Recent"
-# TODO: path parameter
-# if [[ $1 == "--path" ]]
+if [[ $sf == "" || $sf == null ]]; then
+    echo "Error - No sf utility found." >&2
+    exit 1
+fi
+
+### TODO: test org and warn on expiry within
+
+if $path_arg; then
+    open_path=$2
+else
+    # TODO: open collateral/UniversalDocMan
+    open_path="apex/nDOC__AccountDocMan?id=$(sf-get-account-id SForce)"
+fi
+
+# TODO:
+# CACHE_STALE=false
+
+# if [[ $nocache_arg || $CACHE_STALE == true ]]
 # then
-#   PATH=$2
+
+# TODO: use sfdx force:org:display? or otherwise some other quicker way to cred
+login_json=$($sf org open --url-only --json --path="$open_path" 2>/dev/null)
+
+
+# echo $login_json > ~/.local/tmp/open-scratch-org.json
+# else
+# login_json="$(<~/.local/tmp/open-scratch-org.json)"
 # fi
 
-LOGIN_JSON=$($SFDX force:org:open --urlonly --json --path="lightning/o/LLC_BI__Collateral__c/list?filterName=Recent" 2>/dev/null)
-
-if [[ $1 == "--json" ]]
-then
-  echo "$LOGIN_JSON"
-  exit 0
+if $json_arg; then
+    echo "$login_json"
+    exit 0
 fi
 
-LOGIN_URL=$(echo "$LOGIN_JSON" | grep '"url"' | sed -e 's/"url": "\(.*\)",/\1/')
+login_url=$(echo "$login_json" | grep '"url"' | sed -e 's/"url": "\(.*\)",/\1/' | xargs)
 
-if [[ $LOGIN_URL == *"ncino"* || $LOGIN_URL == "" || $LOGIN_URL == null ]]
+if [[ $login_url == *"ncino"* || $login_url == "" || $login_url == null ]]
 then
-  echo Error - No scratch org found. >&2
-  exit 1
+    echo Error - No scratch org found. >&2
+    exit 1
 fi
 
-LOGIN_SID=$(echo "$LOGIN_URL" | sed -e 's/sid=\(.*\)&/\1/')
+login_sid=$(echo "$login_url" | sed -e 's/sid=\(.*\)&/\1/')
 
-if [[ $1 == "--sid" ]]
-then
-  echo $LOGIN_SID
-  exit 0
+if $sid_arg; then
+    echo "$login_sid"
+    exit 0
 fi
 
-if [[ $1 == "--url" ]]
-then
-  echo $LOGIN_URL
-  exit 0
+if $url_arg; then
+    echo "$login_url"
+    exit 0
 fi
 
-open -a "$BROWSER" $LOGIN_URL --args --remote-debugging-port=9222
+open-browser "$login_url"

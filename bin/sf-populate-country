@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# TODO -- update picklist refactor
+sf-update-picklist Country '{FullName: $fullname,  Metadata: {label: "Country", type: "Picklist", valueSet: {valueSetDefinition: {value: [{default: false, label: "nCino USA", valueName: "nCino USA"}, {default: false, label: "nCino Australia", valueName: "nCino Australia"}, {default: false, label: "nCino Performance", valueName: "nCino Performance"}, {default: false, label: "USA", valueName: "USA"}, {default: false, label: "Australia", valueName: "Australia"}, {default: false, label: "UK", valueName: "UK"}, {default: false, label: "Canada", valueName: "Canada"}]}}}}'

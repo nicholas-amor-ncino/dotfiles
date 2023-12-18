@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sfquery "SELECT Id,nFORCE__Correlation_Id__c,nFORCE__Status__c,CreatedDate FROM nFORCE__Business_Process_Interaction__c ORDER BY CreatedDate Desc LIMIT 10" "$@"

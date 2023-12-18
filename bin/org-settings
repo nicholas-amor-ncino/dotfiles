@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sfrecord-locale-home && sfrecord-tz-home && sfrecord-debug-enable

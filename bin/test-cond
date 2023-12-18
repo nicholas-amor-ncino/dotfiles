@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+statement=$1
+
+if [[ $statement == "fs" || -z $statement ]]; then
+    echo fs
+fi
+
+if [[ $statement == "ts" || -z $statement ]]; then
+    echo ts
+fi

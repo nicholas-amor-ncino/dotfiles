@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+ACCOUNT="SForce"
+
+if [ -z "$1" ]; then
+    ACCOUNT="$1"
+fi
+
+sf-get-account "$ACCOUNT" | jq --raw-output '.Id'

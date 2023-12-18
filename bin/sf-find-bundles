@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sfquery "SELECT Id,Name, LLC_BI__Relationship__r.Name,LLC_BI__Collateral__r.Name,LLC_BI__Source_Template__r.Name FROM LLC_BI__Underwriting_Bundle__c"

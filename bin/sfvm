@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# TODO:
+# 1. determine local version
+
+## USAGE
+# sfvm use
+## set to rec. version
+# sfvm install v
+## npm i -g @salesforce/cli@$v
+
+npm run org:user:ceo && npm run org:user:create && npm run org:user:assign:perms && npm run org:lws:disable

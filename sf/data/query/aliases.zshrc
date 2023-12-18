@@ -1,0 +1,6 @@
+alias sfquery-formconfigs="sf data query --query 'SELECT ncinoocr__Key__c, (SELECT ncinoocr__Key__c, Name FROM ncinoocr__Groups__r ORDER BY ncinoocr__Sort_Order__c), (SELECT ncinoocr__Key__c, Name, ncinoocr__Group__r.ncinoocr__Key__c FROM ncinoocr__Fields__r ORDER BY ncinoocr__Sort_Order__c) FROM ncinoocr__AE_Form__c'"
+alias sfquery-drdocumentversions="sf data query --query 'SELECT Id, Name, ncinoocr__Document_Status__c, ncinoocr__Results__c, ncinoocr__Context_Id__c, ncinoocr__Placeholder_Id__c FROM ncinoocr__DR_Document_Version__c ORDER BY CreatedDate DESC'"
+alias sfquery-accounts="sf data query --query 'SELECT Id, Name FROM Account ORDER BY CreatedDate'"
+alias sfquery-collaterals="sf data query --query 'SELECT Id, Name FROM LLC_BI__Collateral__c ORDER BY CreatedDate'"
+alias sfquery-closingchecklists="sf data query --query 'SELECT Id, Name, LLC_BI__docClass__r.Name, LLC_BI__docType__r.Name, LLC_BI__docManager__r.Name FROM LLC_BI__ClosingChecklist__c ORDER BY CreatedDate'"
+#TODO bpo logs, placeholders, screen sections

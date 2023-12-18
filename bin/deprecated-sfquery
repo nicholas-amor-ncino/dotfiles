@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+SF=$(my-sf)
+
+$SF data query --json --query "$@"

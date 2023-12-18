@@ -1,3 +1,7 @@
 #!/bin/sh
 
-ln -s $PWD/bin $HOME/.local/bin
+npm ci
+
+ln -s "$PWD"/bin "$HOME"/.local/bin
+
+#TODO: link zshrc

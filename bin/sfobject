@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# Identify SObject with given Id
+# Usage: sfobject ID
+
+usage() {
+    echo "Usage: sfobject ID"
+}
+
+if [[ -z $1 ]]; then
+    usage >&2
+    exit 1
+fi
+
+if [[ $1 = "--help" || $1 = "-h" ]]; then
+    usage
+    exit
+fi
+
+ID=$1
+SOBJECTTYPE=$(sfobjecttype "$ID" 2>/dev/null)
+STATUS=$?
+if [[ $STATUS != 0 ]]; then
+    MESSAGE="Unable to find type for Id $ID"
+    echo "Error: $MESSAGE" >&2
+    exit $STATUS
+fi
+
+if [[ $2 = "--sobjecttype" ]]; then
+    echo "$SOBJECTTYPE"
+    exit
+fi
+
+DATA=$(sf-get-sobject "$SOBJECTTYPE" --where Id="$ID" 2>/dev/null)
+STATUS=$?
+if [[ $STATUS != 0 ]]; then
+    MESSAGE="$SOBJECTTYPE get failed for record $ID"
+    echo "Error: $MESSAGE" >&2
+    exit $STATUS
+fi
+
+echo "$DATA"

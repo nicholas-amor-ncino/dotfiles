@@ -1,56 +1,23 @@
-
-aws-sso-login() {
-    tempEnvName=$1
-
-    if [ "$tempEnvName" = "" ]; then
-        tempEnvName=dev
-    fi
-    
-    # Validate the environment input-param
-    if [ "$tempEnvName" = "dev" ]; then
-        awsRegion=us-east-1
-    elif [ "$tempEnvName" = "team" ]; then
-        awsRegion=ap-southeast-2
-    elif [ "$tempEnvName" = "devops" ]; then
-        awsRegion=us-east-1
-    elif [ "$tempEnvName" = "qa" ]; then
-        awsRegion=us-east-1
-    # elif [ "$tempEnvName" = "prodapne1" ]; then
-    #     awsRegion=ap-northeast-1
-    # elif [ "$tempEnvName" = "prodapse2" ]; then
-    #     awsRegion=ap-southeast-2
-    # elif [ "$tempEnvName" = "prodcac1" ]; then
-    #     awsRegion=ca-central-1
-    # elif [ "$tempEnvName" = "prodeuc1" ]; then
-    #     awsRegion=eu-central-1
-    # elif [ "$tempEnvName" = "prodeuw2" ]; then
-    #     awsRegion=eu-west-2
-    # elif [ "$tempEnvName" = "produse1" ]; then
-    #     awsRegion=us-east-1
-    else
-        print "Invalid environment-name '$tempEnvName'"
-        return 1
-    fi
-    
-    export AWS_PROFILE=$tempEnvName
-    export AWS_REGION=$awsRegion
-
-    if (aws sts get-caller-identity) > /dev/null; 
-    then
-        # echo "Existing session is still active".
-    else
-        # echo "Regenerating AWS-SSO session. Please be prepared, you'll be prompted to authenticate shortly.."
-        aws sso login
-    fi
-
-    # print "You're now connected to AWS '$tempEnvName' account at '$awsRegion' region"
+sfuser-tz-home2() {
+    $(my-sf) data update record --sobject User --where Username="$(sfusername)" --values TimeZoneSidKey='Australia/Melbourne'
 }
 
-_sfuserset() {
-    variable="$1"
-    value="$2"
-    username=$(sfdx force:org:display --json | jq --raw-output ".result.username")
-    sfdx data update record --sobject User \
-        --where Username="${username}" \
-        --values ${variable}="${value}"
+sfuserset() {
+    VARIABLE="$1"
+    VALUE="$2"
+    $(my-sf) data update record --sobject User --where Username="$(sfusername)" --values $VARIABLE="${VALUE}"
 }
+
+
+sf-open-collateral-docman-url() {
+    sf org open --url-only --path="apex/NDOC__UniversalDocMan?id=$1" --json 2>/dev/null | jq --raw-output '.result.url'
+}
+
+sf-test-quick() {
+    # npm run org:push
+    params=("--class-names AEFormFieldsXPkgTransformerTest")
+    (sftest ${params[@]} > tests.xml) && xmllint --xpath '//*/testcase[failure]' tests.xml > failures.xml
+}
+
+source ~/dotfiles/zsh/functions/aws-sso-login.sh
+source ~/dotfiles/aws/functions.zshrc

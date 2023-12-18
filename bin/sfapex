@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+sf=$(my-sf)
+
+#TODO: silence all but debug output
+#TODO: nice error handling
+output=$($sf apex run --json <<< "$1")
+json=$(echo "$output" | sed '1d' | jq --compact-output)
+
+success=$(jq --raw-output '.result.success' <<< "$json")
+compiled=$(jq --raw-output '.result.compiled' <<< "$json")
+parsing_error=$(($? != 0))
+
+if [[ $parsing_error ]]; then
+    printf "Error: failed to parse response\n%s" "$json" >&2
+    exit 1
+fi
+
+if [[ $compiled == "false" ]]; then
+    message=$(jq --raw-output '.result.compileProblem' <<< "$json")
+    echo "Compiler error: $message" >&2
+    exit 1
+fi
+
+if [[ $success == "false" ]]; then
+    message=$(jq --raw-output '.result.exceptionMessage' <<< "$json")
+    detail=$(jq --raw-output '.result.exceptionStackTrace' <<< "$json")
+    echo "Uncaught exception: $message" >&2
+    echo "$detail" >&2
+    exit 1
+fi
+
+logs=$(jq --raw-output '.result.logs' <<< "$json")
+
+sed -n 's/.*DEBUG|\(.*\)/\1/p' <<< "$logs"

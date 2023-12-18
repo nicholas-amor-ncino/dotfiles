@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sfquery "SELECT ncinoocr__Key__c, (SELECT ncinoocr__Key__c, Name FROM ncinoocr__Groups__r ORDER BY ncinoocr__Sort_Order__c), (SELECT ncinoocr__Key__c, Name, ncinoocr__Group__r.ncinoocr__Key__c FROM ncinoocr__Fields__r ORDER BY ncinoocr__Sort_Order__c) FROM ncinoocr__AE_Form__c"
