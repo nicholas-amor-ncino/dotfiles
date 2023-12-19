@@ -45,8 +45,11 @@ def get_log_events(log_group_name, log_stream_name, next_token=None):
         args.append("--next-token")
         args.append(next_token)
 
-    log_events = subprocess.run(args, capture_output=True, check=True)
-    return json.loads(log_events.stdout)
+    try:
+        log_events = subprocess.run(args, capture_output=True, check=True)
+        return json.loads(log_events.stdout)
+    except Exception as ex:
+        raise RuntimeError(ex.stderr)
 
 
 def get_all_log_events(group, stream):
@@ -85,9 +88,13 @@ def main(input=None):
         print("not logged in to aws - run `sso devops`", file=sys.stderr)
         sys.exit(1)
 
-    for data in get_all_log_events(log_group, log_stream):
-        for event in data["events"]:
-            print(event["message"], end="")
+    try:
+        for data in get_all_log_events(log_group, log_stream):
+            for event in data["events"]:
+                print(event["message"], end="")
+    except Exception as ex:
+        print(f"Fatal error ocurred: {ex}", file=sys.stderr)
+        sys.exit(1)
 
 
 main(*sys.argv[1:])
