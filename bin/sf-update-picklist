@@ -12,6 +12,8 @@ if [[ $sfdisplay_status != 0 ]]; then
     exit $sfdisplay_status
 fi
 
+# TODO allow passing in instance and token
+
 sfinstance=$(jq --raw-output '.result.instanceUrl' <<< "$sfdisplay")
 sftoken=$(jq --raw-output '.result.accessToken' <<< "$sfdisplay")
 

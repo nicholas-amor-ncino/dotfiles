@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+import json
+import os
+import subprocess
+
+
+def fetch():
+    query = subprocess.run(
+        [
+            "sf",
+            "data",
+            "query",
+            "--query",
+            "SELECT NamespacePrefix, Name, Body FROM ApexClass WHERE ManageableState = 'installed' ORDER BY NamespacePrefix, Name",
+            "--use-tooling-api",
+            "--json",
+        ],
+        capture_output=True,
+        check=True,
+    )
+    return json.loads(query.stdout)
+
+
+def with_body(records):
+    return filter(lambda r: r["Body"] != "(hidden)", records)
+
+
+def open_class_file(record):
+    path = os.path.join("cache", record["NamespacePrefix"])
+    os.makedirs(path, exist_ok=True)
+    return open(
+        os.path.join(path, f"{record['Name']}.cls"),
+        "w",
+    )
+
+
+def save_class_file(record):
+    with open_class_file(record) as f:
+        f.write(record["Body"].replace("\\n", "\n"))
+
+
+data = fetch()
+
+for record in with_body(data["result"]["records"]):
+    save_class_file(record)

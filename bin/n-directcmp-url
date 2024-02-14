@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# import base64
+# import json
+# from sys import argv
+
+
+# btoa() {
+#   python -c "import base64,json,sys; print(base64.b64encode(json.dumps(json.loads(
+# }
+# json='{"componentDef":"c:niqMappingContainer","attributes":{},"state":{}}'
+# base64=btoa(json)
+
+
+# def get_cmp_url(cmp_ids):
+#     j = json.dumps({"componentDef": cmp_ids, "attributes": {}, "state": {}})
+#     return base64.urlsafe_b64encode(j.encode()).decode().replace("=", "")
+
+
+# print(f"/one/one.app#{get_cmp_url(argv[1:])}")
+
+usage() {
+    echo "Usage: $0 <component-id>"
+}
+
+if [[ $1 = "--help" ]] || [[ -z $1 ]]; then
+    usage
+    exit
+fi
+
+ref=$(echo -n "{\"componentDef\":\"c:$1\"}"| base64)
+
+echo "/one/one.app#$ref"

@@ -13,7 +13,7 @@ alias sfpush-force="sf project deploy start --ignore-conflicts"
 alias sfpull="sf project retrieve start"
 alias sfpull-file="sf project retrieve start --source-dir"
 
-alias sfdelete="sf force org delete"
+alias sfdelete="sf org delete scratch"
 alias sfrecord="sf data get record"
 alias sflogout="sf force:auth:logout --no-prompt --target-org"
 alias sfclass="sf apex generate class --output-dir . --name"
@@ -21,6 +21,8 @@ alias sfclass="sf apex generate class --output-dir . --name"
 alias sfquery="sf data query --query"
 source ~/dotfiles/sf/data/query/aliases.zshrc
 
+# TODO async via sf apex get test
+# TODO sync version too
 alias sftest="sf apex test run --wait 30 --result-format junit"
 alias sftest-class="sf apex test run --wait 30 --result-format junit --class-names"
 

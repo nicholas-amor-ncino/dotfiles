@@ -3,13 +3,14 @@
 # retrieves the plain text log of a given CodeBuild run
 
 import json
-import sys
-import subprocess
 import os
+import re
+import subprocess
+import sys
 
 
 def usage():
-    print("Usage: awslogcat <log-group-name:log-stream-name>")
+    print("Usage: awslogcat (<log-group-name:log-stream-name>|<log-url>)")
 
 
 def parse_input(input):
@@ -21,7 +22,8 @@ def parse_input(input):
         print("expected format <log-group-name:log-stream-name>", file=sys.stderr)
         sys.exit(1)
 
-    return input.split(":")
+    match = re.search(r"([a-zA-Z-]+):([a-f0-9-]+)", input)
+    return match.groups()
 
 
 def is_aws_authenticated():
@@ -99,3 +101,6 @@ def main(input=None):
 
 main(*sys.argv[1:])
 # main("ncinoocr-ci-build-devops:c50e8b5c-c38d-4c29-ba6f-2d2932a60eed")
+# main(
+#     "https://console.aws.amazon.com/codesuite/codebuild/726849041453/projects/ncinoocr-package-create-devops/build/ncinoocr-package-create-devops:f2df23cb-854f-44bc-a4ef-b3220d7f3029?region=us-east-1"
+# )

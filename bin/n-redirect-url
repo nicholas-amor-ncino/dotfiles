@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 usage() {
-    echo "Usage: $0 <target> (docman|docman-acc|dashboard)"
+    echo "Usage: $0 (docman|docman-acc|dashboard) <args>"
 }
 
 usage_docman() {
